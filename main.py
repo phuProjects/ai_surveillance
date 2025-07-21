@@ -1,18 +1,32 @@
 import cv2
 from ultralytics import YOLO
-import simpleaudio as sa
+import pygame as pg
 import os
+import time
 
 
 model = YOLO("yolov8n.pt")
-alert_wave = sa.WaveObject.from_wave_file(os.path.join("alerts", "bloop_x.wav"))
+pg.mixer.init()
+
+alert_path = os.path.join("alerts","pop.wav")
+alert_sound = pg.mixer.Sound(alert_path)
 
 TARGET_OBJECTS = {"bottle"} #Add more objects later on
+ALERT_COOLDOWN = 5   # seconds
+last_alert_time = 0  # track time of last alert
 
 def alert():
-    alert_wave.play()
+    global last_alert_time
+    now = time.time()
+    if now - last_alert_time >= ALERT_COOLDOWN:
+        try:
+            alert_sound.play()
+            last_alert_time = now
+        except Exception as e:
+            print("Audio playback failed:", e)
 
-cap = cv2.VideoCapture(0)
+video_path = os.path.join("videos","")
+cap = cv2.VideoCapture(video_path)
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
