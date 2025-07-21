@@ -19,9 +19,8 @@ while True:
     annotated_frame = results[0].plot()
     cv2.imshow("YOLOv8 Surveillance", annotated_frame)
 
-    if cv2.waitKey(0) == 27:  # Press 'q' to quit
+    if cv2.waitKey(100) == 27:  # Press 'q' to quit
         break
-
 
 cap.release()
 cv2.destroyAllWindows()
