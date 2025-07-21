@@ -1,4 +1,8 @@
 import cv2
+from ultralytics import YOLO
+
+
+model = YOLO("yolov8n.pt")
 
 cap = cv2.VideoCapture(0)
 
@@ -8,15 +12,16 @@ if not cap.isOpened():
 
 while True:
     ret, frame = cap.read()
-
     if not ret:
-        print("Cannot receive frame")
         break
 
-    cv2.imshow('Webcam Feed', frame)
+    results = model(frame)
+    annotated_frame = results[0].plot()
+    cv2.imshow("YOLOv8 Surveillance", annotated_frame)
 
-    if cv2.waitKey(1) == 27:
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # Press 'q' to quit
         break
+
 
 cap.release()
 cv2.destroyAllWindows()
