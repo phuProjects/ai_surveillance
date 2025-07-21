@@ -2,16 +2,29 @@ import cv2
 from ultralytics import YOLO
 import simpleaudio as sa
 import os
+import time
 
 
 model = YOLO("yolov8n.pt")
 
-ALERT_SOUND_PATH = os.path.join("alerts", "bloop_x.wav") #Using os make program compatible with other operating systems
+ALERT_SOUND_PATH = os.path.join("alerts", "pop.wav") #Using os make program compatible with other operating systems
 alert_wave = sa.WaveObject.from_wave_file(ALERT_SOUND_PATH)
 TARGET_OBJECTS = {"bottle"} #Add more objects later on
 
+last_alert_time = 0  # track time of last alert
+ALERT_COOLDOWN = 5   # seconds
+
 def alert():
-    alert_wave.play()
+    global last_alert_time
+    now = time.time()
+    if now - last_alert_time >= ALERT_COOLDOWN:
+        try:
+            alert_wave.play()
+            last_alert_time = now
+        except Exception as e:
+            print("Audio playback failed:", e)
+
+
 
 cap = cv2.VideoCapture(0)
 if not cap.isOpened():
