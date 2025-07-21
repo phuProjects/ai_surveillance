@@ -1,11 +1,17 @@
 import cv2
 from ultralytics import YOLO
+from playsound import playsound
+import os
 
 
 model = YOLO("yolov8n.pt")
 
-cap = cv2.VideoCapture(0)
+ALERT_SOUND = os.path.join("alrts", "bloop_x.wav")
+TARGET_OBJECTS = {"person"}
 
+alert_triggered = False
+
+cap = cv2.VideoCapture(0)
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
@@ -19,7 +25,7 @@ while True:
     annotated_frame = results[0].plot()
     cv2.imshow("YOLOv8 Surveillance", annotated_frame)
 
-    if cv2.waitKey(0) == 27:  # Press 'q' to quit
+    if cv2.waitKey(1) == 27:  # Press 'q' to quit
         break
 
 
