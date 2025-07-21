@@ -1,11 +1,19 @@
 import cv2
 from ultralytics import YOLO
+import simpleaudio as sa
+import os
 
 
 model = YOLO("yolov8n.pt")
 
-cap = cv2.VideoCapture(0)
+ALERT_SOUND_PATH = os.path.join("alerts", "bloop_x.wav") #Using os make program compatible with other operating systems
+alert_wave = sa.WaveObject.from_wave_file(ALERT_SOUND_PATH)
+TARGET_OBJECTS = {"bottle"} #Add more objects later on
 
+def alert():
+    alert_wave.play()
+
+cap = cv2.VideoCapture(0)
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
@@ -17,9 +25,20 @@ while True:
 
     results = model(frame)
     annotated_frame = results[0].plot()
+
+    #Checking for detections
+    for result in results:
+        for box in result.boxes:
+            cls_id = int(box.cls[0])
+            label = model.names[cls_id]
+
+            if label in TARGET_OBJECTS:
+                print(f"ALERT {label} detected!!!")
+                alert()
+                
     cv2.imshow("YOLOv8 Surveillance", annotated_frame)
 
-    if cv2.waitKey(100) == 27:  # Press 'q' to quit
+    if cv2.waitKey(1) == 27:  # Press 'q' to quit
         break
 
 cap.release()
