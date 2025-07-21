@@ -5,9 +5,8 @@ import os
 
 
 model = YOLO("yolov8n.pt")
+alert_wave = sa.WaveObject.from_wave_file(os.path.join("alerts", "bloop_x.wav"))
 
-ALERT_SOUND_PATH = os.path.join("alerts", "bloop_x.wav") #Using os make program compatible with other operating systems
-alert_wave = sa.WaveObject.from_wave_file(ALERT_SOUND_PATH)
 TARGET_OBJECTS = {"bottle"} #Add more objects later on
 
 def alert():
