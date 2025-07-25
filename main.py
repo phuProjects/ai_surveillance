@@ -29,33 +29,37 @@ def alert():
             print("Audio playback failed:", e)
 
 # Start video
-cap = cv2.VideoCapture(video_path)
-if not cap.isOpened():
-    print("Cannot open video")
-    exit()
+def start_surveillance():
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        print("Cannot open video")
+        exit()
 
-while True:
-    ret, frame = cap.read()
-    if not ret:
-        break
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
 
-    results = model(frame)
-    annotated_frame = results[0].plot()
+        results = model(frame)
+        annotated_frame = results[0].plot()
 
-    #Checking for detections
-    for result in results:
-        for box in result.boxes:
-            cls_id = int(box.cls[0])
-            label = model.names[cls_id]
+        #Checking for detections
+        for result in results:
+            for box in result.boxes:
+                cls_id = int(box.cls[0])
+                label = model.names[cls_id]
 
-            if label in TARGET_OBJECTS:
-                print(f"ALERT {label} detected!!!")
-                alert()
-                
-    cv2.imshow("YOLOv8 Surveillance", annotated_frame)
+                if label in TARGET_OBJECTS:
+                    print(f"ALERT {label} detected!!!")
+                    alert()
+                    
+        cv2.imshow("YOLOv8 Surveillance", annotated_frame)
 
-    if cv2.waitKey(1) == 27:
-        break
+        if cv2.waitKey(1) == 27:
+            break
 
-cap.release()
-cv2.destroyAllWindows()
+    cap.release()
+    cv2.destroyAllWindows()
+    
+if __name__ == "__main__":
+    start_surveillance()
