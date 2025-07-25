@@ -4,15 +4,18 @@ import pygame as pg
 import os
 import time
 
+# Paths
+alert_path = os.path.join("alerts","bloop_x.wav")
+video_path = os.path.join("videos","sample1.mp4")
 
+# Initializing models and audios
 model = YOLO("yolov8n.pt")
 pg.mixer.init()
-
-alert_path = os.path.join("alerts","pop.wav")
 alert_sound = pg.mixer.Sound(alert_path)
 
-TARGET_OBJECTS = {"bottle"} #Add more objects later on
-ALERT_COOLDOWN = 5   # seconds
+# Detection settings
+TARGET_OBJECTS = {"person"} #Add more objects later on
+ALERT_COOLDOWN = 0.5   # seconds
 last_alert_time = 0  # track time of last alert
 
 def alert():
@@ -25,10 +28,10 @@ def alert():
         except Exception as e:
             print("Audio playback failed:", e)
 
-video_path = os.path.join("videos","")
+# Start video
 cap = cv2.VideoCapture(video_path)
 if not cap.isOpened():
-    print("Cannot open camera")
+    print("Cannot open video")
     exit()
 
 while True:
@@ -51,7 +54,7 @@ while True:
                 
     cv2.imshow("YOLOv8 Surveillance", annotated_frame)
 
-    if cv2.waitKey(1) == 27:  # Press 'q' to quit
+    if cv2.waitKey(1) == 27:
         break
 
 cap.release()
